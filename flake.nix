@@ -1,9 +1,15 @@
 {
   description = "a nix flake for rofi-blocks";
-  outputs = { self, nixpkgs }: {
+  outputs = { self, nixpkgs }:
+  let
     system = "x86_64-linux";
-    overlay = (self: super:{
-      rofi-blocks = import ./build.nix nixpkgs;
-    });
-  };
+    pkgs = import nixpkgs { inherit system; };
+    drv = import ./build.nix pkgs;
+  in
+    {
+      overlay = (self: super:{
+        rofi-blocks = drv;
+      });
+      packages.${system}.default = drv;
+    };
 }
